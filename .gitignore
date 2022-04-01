@@ -1,2 +1,4 @@
 /venv/
 /todo_notes/db.sqlite3
+/todo_notes/package.json
+/todo_notes/package-lock.json
