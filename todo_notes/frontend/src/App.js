@@ -10,6 +10,8 @@ import FooterItem from "./components/Footer";
 import ProjectList from "./components/Projects";
 import TodoList from "./components/TODOs";
 import ProjectDetails from "./components/ProjectDetails";
+import Cookies from "universal-cookie/lib";
+import LoginForm from "./components/Auth";
 
 
 class App extends React.Component {
@@ -22,18 +24,48 @@ class App extends React.Component {
        }
    }
 
-   componentDidMount() {
-       axios.get('http://127.0.0.1:8000/api/users')
-       .then(response => {
-           const users = response.data.results
-               this.setState(
-               {
-                   'user': users
-               }
-           )
-       }).catch(error => console.log(error))
+   logout() {
+        this.setToken('');
+    }
 
-       axios.get('http://127.0.0.1:8000/api/projects').then(
+    getToken(username, password) {
+        console.log(this);
+        console.log(username, password);
+        axios.post(
+            'http://127.0.0.1:8000/api-auth-token/',
+            {username: username, password: password}
+        ).then(response => {
+            this.setToken(response.data['token'])
+        }).catch(error => alert('Неверный логин или пароль'))
+    }
+
+    getTokenFromStorage() {
+        const cookies = new Cookies()
+        const token = cookies.get('token')
+        console.log("token", token);
+        this.setState({'token': token}, () => this.loadData())
+    }
+
+    setToken(token) {
+        const cookies = new Cookies()
+        cookies.set('token', token)
+        this.setState({'token': token}, () => this.loadData())
+    }
+
+    loadData() {
+        if (!this.isAuthenticated()) {
+            return;
+        }
+        const headers = this.getHeaders()
+        axios.get('http://127.0.0.1:8000/api/users', {headers}).then(
+            response => {
+                const users = response.data.results
+                this.setState(
+                    {'users': users}
+                )
+            }
+        ).catch(error => console.log(error))
+        axios.get('http://127.0.0.1:8000/api/projects', {headers}).then(
             response => {
                 const projects = response.data.results
                 this.setState(
@@ -41,8 +73,7 @@ class App extends React.Component {
                 )
             }
         ).catch(error => console.log(error))
-
-        axios.get('http://127.0.0.1:8000/api/todo').then(
+        axios.get('http://127.0.0.1:8000/api/todo', {headers}).then(
             response => {
                 const todos = response.data.results
                 this.setState(
@@ -50,6 +81,25 @@ class App extends React.Component {
                 )
             }
         ).catch(error => console.log(error))
+
+    }
+
+    getHeaders() {
+        let headers = {
+            'Content-Type': 'application/json'
+        }
+        if (this.isAuthenticated()) {
+            headers['Authorization'] = `Token ${this.state.token}`;
+        }
+        return headers
+    }
+
+    isAuthenticated() {
+        return this.state.token !== '';
+    }
+
+   componentDidMount() {
+       this.getTokenFromStorage();
 }
 
    render () {
