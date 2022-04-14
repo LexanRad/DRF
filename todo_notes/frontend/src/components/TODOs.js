@@ -1,31 +1,27 @@
-import React from "react";
+import TodoItem from './TodoItem.js'
+import {HashRouter, BrowseRouter, Route, Link, Switch, Redirect} from "react-router-dom"
 
-const TodoItem = ({todo}) => {
-    return (
-        <tr>
-            <td>{todo.user}</td>
-            <td>{todo.description}</td>
-            <td>{todo.active}</td>
-            <td>{todo.project}</td>
-        </tr>
-    )
-}
 
-const TodoList = ({todos}) => {
+const TodoList = ({todo, users, deleteTodo}) => {
     return (
-        <table>
-            <thead>
-            <tr>
-                <th>User</th>
-                <th>Description</th>
-                <th>Active</th>
-                <th>Project</th>
-            </tr>
-            </thead>
-            <tbody>
-            {todos.map((todo) => <TodoItem key={todo.id} todo={todo}/>)}
-            </tbody>
-        </table>
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Проект</th>
+                        <th>пользователь-создатель</th>
+                        <th>заголовок</th>
+                        <th>заметка</th>
+                        <th>Активность</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {todo.map((todo)=> <TodoItem todo={todo} users={users} deleteTodo={deleteTodo} />)}
+                </tbody>
+            </table>
+           <button type="button" class="btn btn-info"><Link to='/todo/create'>Создать заметку</Link></button>
+       </div>
     )
 }
 
