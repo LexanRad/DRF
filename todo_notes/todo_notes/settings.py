@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'drf_yasg',
+    'graphene_django',
 
     'usersapp',
     'project',
@@ -147,4 +148,8 @@ REST_FRAMEWORK = {
                                        'rest_framework.authentication.SessionAuthentication',
                                        'rest_framework.authentication.TokenAuthentication']
 
+}
+
+GRAPHENE = {
+    'SCHEMA': 'todo_notes.schema.schema'
 }

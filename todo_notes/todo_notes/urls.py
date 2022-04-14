@@ -23,6 +23,7 @@ from rest_framework.authtoken import views
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView,)
 from usersapp.views import UserGenericViewSet
 from project.views import ProjectModelViewSet, ToDoModelViewSet
+from graphene_django.views import GraphQLView
 
 router = DefaultRouter()
 router.register('users', UserGenericViewSet)
@@ -56,4 +57,5 @@ urlpatterns = [
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('graphql/', GraphQLView.as_view(graphiql=True)),
 ]
