@@ -1,0 +1,45 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres:13.4
+    privileged: true
+    ports:
+      - 5435:5432
+    environment:
+      POSTGRES_USER: lexan
+      POSTGRES_PASSWORD: lexan1234
+      POSTGRES_DB: todo
+
+#  adminer:
+#    image: adminer:4.7.8-standalone
+#    restart: always
+#    ports:
+#      - 8080:8080
+#    depends_on:
+#      - db
+
+  backend:
+    build: ./backend
+    privileged: true
+    ports:
+      - 8080:8080
+    command: bash -c "
+      - python manage.py migrate &&
+      - gunicorn todo_notes.wsgi -b 0.0.0.0:8080"
+    depends_on:
+      - db
+
+  nginx:
+    build: ./nginx
+    ports:
+      - 8080:80
+    depends_on:
+      - backend
+
+  frontend:
+    build: ./frontend
+    ports:
+      - 80:80
+    depends_on:
+      - nginx
